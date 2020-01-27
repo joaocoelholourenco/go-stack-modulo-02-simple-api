@@ -5,7 +5,7 @@ server.use(express.json());
 
 const users = ['Joao', 'Vitor'];
 
-server.use((request, response, next)=>{
+server.use((request, response, next) => {
     console.time('request')
     console.log(`Metodo: ${request.method}, URL: ${request.url};`);
 
@@ -14,46 +14,55 @@ server.use((request, response, next)=>{
     console.timeEnd('request');
 });
 
-function checkUserExists(req, res, next){
-    if(!req.body.nome){
-        return res.status(400).json({error:'User name is required'});
+function checkUserExists(req, res, next) {
+    if (!req.body.nome) {
+        return res.status(400).json({ error: 'User name is required' });
     }
 
     return next();
-}
-server.get('/users/:index',(request, response)=>{
-    const {index} = request.params;
+};
 
-    return response.json({messagem:`Buscando usuario ${users[index]}`});
+function checkUserInArray(req, res, next) {
+    if (!users[req.params.index]) {
+        return res.status(400).json({ error: 'User does not exists' })
+    }
+
+    return next();
+};
+
+server.get('/users/:index', checkUserInArray, (request, response) => {
+    const { index } = request.params;
+
+    return response.json({ messagem: `Buscando usuario ${users[index]}` });
 });
 
-server.get('/users',(request, response)=>{
+server.get('/users', (request, response) => {
     return response.json(users);
 });
 
-server.post('/users', checkUserExists,(request, response)=>{
-    
-    const {nome} = request.body;
+server.post('/users', checkUserExists, (request, response) => {
+
+    const { nome } = request.body;
     users.push(nome);
 
     return response.json(users);
 });
 
-server.put('/users/:index', checkUserExists, (request, response)=>{
-    
-    const {nome} = request.body;
-    const {index} = request.params;
+server.put('/users/:index', checkUserExists, checkUserInArray, (request, response) => {
 
-    users[index]=nome;
+    const { nome } = request.body;
+    const { index } = request.params;
+
+    users[index] = nome;
 
     return response.json(users);
 });
 
-server.delete('/users/:index',(request, response)=>{
-    
-    const {index} = request.params;
+server.delete('/users/:index', checkUserInArray, (request, response) => {
 
-    users.splice(index,1);
+    const { index } = request.params;
+
+    users.splice(index, 1);
 
     return response.send();
 });
