@@ -1,0 +1,16 @@
+{
+  "name": "modulo01",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "João Vitor <joaovitorcoelho13@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
